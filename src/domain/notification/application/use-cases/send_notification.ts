@@ -7,14 +7,14 @@ import { NotificationRepository } from '../repositories/notification_repository'
 
 // -- TYPES
 
-interface SendNotificationUseCaseRequest
+export interface SendNotificationUseCaseRequest
 {
     recipientId: string;
     title: string;
     content: string;
 }
 
-type SendNotificationUseCaseResponse = Either<null, { notification: Notification; }>;
+export type SendNotificationUseCaseResponse = Either<null, { notification: Notification; }>;
 
 export class SendNotificationUseCase
 {
