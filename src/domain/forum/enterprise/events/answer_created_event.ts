@@ -11,7 +11,7 @@ export class AnswerCreatedEvent implements DomainEvent
     // -- ATTRIBUTES
 
     public ocurredAt: Date;
-    private answer: Answer; 
+    public answer: Answer; 
 
     // -- CONSTRUCTOR
 

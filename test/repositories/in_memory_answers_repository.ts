@@ -1,5 +1,6 @@
 // -- IMPORTS
 
+import { DomainEvents } from '@core/events/domain_events';
 import { getPaginationIndexByPage } from '@core/repositories/get_pagination_index';
 import { PaginationParams } from '@core/repositories/pagination_params';
 import { AnswerAttachmentRepository } from '@domain/forum/application/repositories/answer_attachment_repository';
@@ -65,6 +66,8 @@ export class InMemoryAnswersRepository implements AnswersRepository
         this.items[ answerIndex ] = answer;
 
         await this.answerAttachmentRepository.deleteManyByAnswerId( answer.id.toString() );
+
+        DomainEvents.dispatchEventsForAggregate( answer.id );
     }
 
     // ~~
@@ -74,6 +77,8 @@ export class InMemoryAnswersRepository implements AnswersRepository
         )
     {
         this.items.push( answer );
+
+        DomainEvents.dispatchEventsForAggregate( answer.id );
     }
 
     // ~~
