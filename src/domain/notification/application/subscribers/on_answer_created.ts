@@ -43,12 +43,12 @@ export class OnAnswerCreated implements EventHandler
             const title = 'Nova resposta em '
                 + question.title.substring( 0, 40 ).concat( '...' );
             await this.sendNotification.execute(
-            {
-                recipientId: question.authorId.toString(),
-                title,
-                content: answer.excerpt
-            }
-            )
+                {
+                    recipientId: question.authorId.toString(),
+                    title,
+                    content: answer.excerpt
+                }
+                );
         }
     }
 }

@@ -1,6 +1,7 @@
 // -- IMPORTS
 
 import { UniqueEntityId } from '@core/entities/unique_entity_id';
+import { DomainEvents } from '@core/events/domain_events';
 import { getPaginationIndexByPage } from '@core/repositories/get_pagination_index';
 import { PaginationParams } from '@core/repositories/pagination_params';
 import { QuestionAttachmentRepository } from '@domain/forum/application/repositories/question_attachment_repository';
@@ -78,6 +79,8 @@ export class InMemoryQuestionsRepository implements QuestionRepository
         const questionIndex = this.items.findIndex( ( question_ ) => question_.id === question.id );
 
         this.items[ questionIndex ] = question;
+
+        DomainEvents.dispatchEventsForAggregate( question.id );
     }
 
     // ~~
@@ -87,6 +90,8 @@ export class InMemoryQuestionsRepository implements QuestionRepository
         )
     {
         this.items.push( question );
+
+        DomainEvents.dispatchEventsForAggregate( question.id );
     }
 
     // ~~

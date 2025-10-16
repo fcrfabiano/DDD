@@ -1,6 +1,6 @@
 // -- IMPORTS
 
-import { OnAnswerCreated } from './on_answer_created';
+import { OnQuestionBestAnswerChosen } from './on_question_best_answer_chosen';
 import { InMemoryAnswersRepository } from 'test/repositories/in_memory_answers_repository';
 import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/in_memory_answer_attachments_repository';
 import { InMemoryQuestionsRepository } from 'test/repositories/in_memory_questions_repository';
@@ -25,7 +25,7 @@ let sendNotificationExecuteSpy: MockInstance<( request: SendNotificationUseCaseR
 // -- STATEMENTS
 
 describe(
-    'On Answer Created',
+    'On Question Best Answer Chosen',
     () =>
     {
         beforeEach(
@@ -40,15 +40,15 @@ describe(
 
                 sendNotificationExecuteSpy = vi.spyOn( sut, 'execute' );
 
-                new OnAnswerCreated(
-                    inMemoryQuestionsRepository,
+                new OnQuestionBestAnswerChosen(
+                    inMemoryAnswersRepository,
                     sut
                     );
             }
             );
 
         it(
-            'Should send a notification when an answer is created',
+            'Should send a notification when an best answer is chosen',
             async () =>
             {
                 const question = makeQuestion();
@@ -60,6 +60,10 @@ describe(
 
                 await inMemoryQuestionsRepository.create( question );
                 await inMemoryAnswersRepository.create( answer );
+
+                question.bestAnswerId = answer.id;
+
+                await inMemoryQuestionsRepository.save( question );
 
                 await waitFor(
                     () =>
