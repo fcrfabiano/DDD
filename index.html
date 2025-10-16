@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro com Biometria</title>
+</head>
+
+<body>
+    <h1>Cadastro de Usuário</h1>
+
+    <form id="user-form">
+        <input type="text" id="nome" placeholder="Nome" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <div id="status"></div>
+
+    <button id="biometric-login" style="display:none;">Login com Biometria</button>
+
+    <script>
+        const form = document.getElementById('user-form');
+        const biometricBtn = document.getElementById('biometric-login');
+        const statusDiv = document.getElementById('status');
+
+        // Verifica suporte à biometria
+        async function checkBiometricSupport() {
+            if (window.PublicKeyCredential) {
+                const isAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                return isAvailable;
+            }
+            return false;
+        }
+
+        // Salva usuário no localStorage
+        function saveUser(nome, email) {
+            localStorage.setItem('usuario', JSON.stringify({ nome, email }));
+        }
+
+        // Recupera usuário
+        function getUser() {
+            return JSON.parse(localStorage.getItem('usuario'));
+        }
+
+        // Autenticação biométrica (simples)
+        async function requestBiometric() {
+            try {
+                const publicKey = {
+                    challenge: new Uint8Array(26),
+                    allowCredentials: [],
+                    timeout: 60000,
+                    userVerification: "required",
+                };
+
+                await navigator.credentials.get({ publicKey });
+                alert("Autenticado com sucesso via biometria!");
+            } catch (error) {
+                alert("Falha na autenticação: " + error.message);
+            }
+        }
+
+        // Evento de cadastro
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+
+            const suportaBiometria = await checkBiometricSupport();
+
+            if (!suportaBiometria) {
+                alert("Seu dispositivo não suporta autenticação biométrica.");
+                return;
+            }
+
+            saveUser(nome, email);
+            statusDiv.textContent = `Usuário ${nome} cadastrado com biometria disponível.`;
+            biometricBtn.style.display = 'inline-block';
+        });
+
+        // Evento de login biométrico
+        biometricBtn.addEventListener('click', async () => {
+            const user = getUser();
+            if (!user) {
+                alert("Nenhum usuário cadastrado.");
+                return;
+            }
+
+            await requestBiometric();
+        });
+
+    </script>
+</body>
+
+</html>
